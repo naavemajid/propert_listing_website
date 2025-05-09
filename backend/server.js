@@ -1,4 +1,4 @@
-import express, { urlencoded } from 'express';
+import express from 'express';
 import mysql from 'mysql2';
 import dotenv from 'dotenv'
 
@@ -8,14 +8,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
-
+ 
 const PORT = process.env.PORT;
 
 const connectDb = mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user:  process.env.MYSQL_USER,
-    password:  process.env.MYSQL_PASSWORD,
-    database:  process.env.MYSQL_DATABASE
+    host: process.env.HOST,
+    user:  process.env.USER,
+    password:  process.env.PASSWORD,
+    database:  process.env.DATABASE
 })
 
 
@@ -49,7 +49,7 @@ app.get('/singleproperty/:id', (req, res)=>{
         res.send(result[0])
     })
 })
-
+ 
 // Route to create or add a property
 app.post('/addproperty',(req, res)=>{
     const Image = req.body.image
@@ -61,18 +61,19 @@ app.post('/addproperty',(req, res)=>{
     const insertSql = "INSERT INTO propertyinfo (Image, Title, Location, Price, Desworcription)  VALUES (?, ?, ?, ?, ?)"
     connectDb.query(insertSql,[Image ,Title, Location, Price, Description],(err, result)=>{
         if(err){
-            res.send({message: 'unble to create data'})
+            res.status(404).send({message: 'unble to create data'})
         }
-        res.status(201).send(result[0]) 
+        res.status(201).send(result) 
     })
 })
 
-
+   
 // Route to update a property
-app.get('/updateproperty/:id', (req, res)=>{
+app.put('/updateproperty/:id', (req, res)=>{
     const ID = Number(req.params.id);
 
     console.log(ID)
+    res.send(`ID yet to update is ${ID}, update functionality is in progress`)
 })
 
 // Route to delete a property
@@ -83,7 +84,7 @@ app.delete('/deleteproperty/:id', (req, res)=>{
         if(err){
             res.send({message: 'unable to Ddelet property'})
         }
-        res.send(result[0])
+        res.send({message:'Successfully deleted property'})
     })
 })
 
